@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Down and Dirty Landscaping — Transform Your Outdoor Space</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#061b0e",
+          "on-primary": "#ffffff",
+          "primary-container": "#1b3022",
+          "on-primary-container": "#819986",
+          "secondary": "#7c5730",
+          "on-secondary": "#ffffff",
+          "secondary-container": "#fdcb9b",
+          "on-secondary-container": "#79542d",
+          "tertiary": "#0f1912",
+          "surface": "#fcf9f4",
+          "surface-container-low": "#f6f3ee",
+          "surface-container": "#f0ede8",
+          "surface-container-high": "#ebe8e3",
+          "surface-container-highest": "#e5e2dd",
+          "on-surface": "#1c1c19",
+          "on-surface-variant": "#434843",
+          "outline": "#737973",
+          "outline-variant": "#c3c8c1",
+          "surface-tint": "#4d6453",
+          "background": "#fcf9f4",
+          "on-background": "#1c1c19",
+          "primary-fixed": "#d0e9d4",
+          "primary-fixed-dim": "#b4cdb8",
+          "secondary-fixed": "#ffdcbd",
+          "error": "#ba1a1a",
+        },
+        borderRadius: {
+          "sm": "0.25rem",
+          "DEFAULT": "0.5rem",
+          "md": "0.75rem",
+          "lg": "1rem",
+          "xl": "1.5rem",
+          "full": "9999px"
+        },
+        fontFamily: {
+          "manrope": ["Manrope", "sans-serif"],
+          "vietnam": ["Be Vietnam Pro", "sans-serif"],
+          "display": ["Manrope", "sans-serif"],
+          "headline-lg": ["Manrope", "sans-serif"],
+          "headline-md": ["Manrope", "sans-serif"],
+          "body-lg": ["Be Vietnam Pro", "sans-serif"],
+          "body-md": ["Be Vietnam Pro", "sans-serif"],
+          "label-caps": ["Manrope", "sans-serif"],
+        },
+        fontSize: {
+          "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+          "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+          "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+          "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+          "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+          "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700" }],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  /* No scroll-behavior:smooth — would interfere with frame-accurate scroll animation */
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* ── Scroll reveal ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s cubic-bezier(.16,1,.3,1), transform 0.65s cubic-bezier(.16,1,.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ── Reduced motion — disable all animations for users who prefer it ── */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal, .reveal-delay-1, .reveal-delay-2, .reveal-delay-3 {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    .fab, .project-card, .service-card {
+      transition: none !important;
+    }
+    #hero-overlay {
+      transition: none !important;
+    }
+  }
+
+  /* ── Scroll hero ── */
+  #hero-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh; /* correct for mobile browsers with collapsible URL bar */
+    width: 100%;
+    overflow: hidden;
+  }
+  #hero-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  #hero-loader {
+    position: absolute;
+    inset: 0;
+    background: #061b0e;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: opacity 0.7s ease;
+  }
+  #hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    padding-top: 80px; /* clear the fixed nav */
+    pointer-events: none;
+  }
+  #hero-overlay > * { pointer-events: auto; }
+  #hero-bottom-fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+    background: linear-gradient(to top, #fcf9f4, transparent);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* ── Before/After Slider ── */
+  .ba-wrap {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    user-select: none;
+    cursor: ew-resize;
+    touch-action: none;
+  }
+  .ba-before-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    clip-path: inset(0 50% 0 0);
+  }
+  .ba-before-layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .ba-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 3px;
+    background: white;
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+  }
+  .ba-handle-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1b3022;
+    pointer-events: none;
+  }
+  .ba-label {
+    position: absolute;
+    top: 14px;
+    padding: 4px 14px;
+    background: rgba(6,27,14,0.82);
+    color: white;
+    font-family: Manrope, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* ── Gallery filter ── */
+  .filter-btn {
+    min-height: 44px; /* WCAG / HIG touch target minimum */
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-family: Manrope, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    border: 1.5px solid #c3c8c1;
+    color: #434843;
+    background: transparent;
+    cursor: pointer;
+    touch-action: manipulation; /* removes 300ms tap delay on mobile */
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: #061b0e;
+    border-color: #061b0e;
+    color: white;
+  }
+  .filter-btn:focus-visible {
+    outline: 3px solid #4d6453;
+    outline-offset: 2px;
+  }
+
+  /* ── Project card ── */
+  .project-card {
+    background: #f6f3ee;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(195,200,193,0.35);
+    box-shadow: 0 4px 12px rgba(27,48,34,0.05);
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(.16,1,.3,1), box-shadow 0.3s ease;
+  }
+  .project-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(27,48,34,0.13);
+  }
+  .project-card .img-wrap { height: 220px; overflow: hidden; }
+  .project-card .img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .project-card:hover .img-wrap img { transform: scale(1.06); }
+  .project-card.hidden-card { display: none; }
+
+  /* ── Service card ── */
+  .service-card {
+    background: #f6f3ee;
+    border: 1px solid rgba(195,200,193,0.4);
+    border-radius: 1rem;
+    padding: 28px 24px;
+    box-shadow: 0 4px 12px rgba(27,48,34,0.05);
+    cursor: default;
+    transition: transform 0.3s cubic-bezier(.16,1,.3,1), box-shadow 0.3s ease, background 0.2s;
+  }
+  .service-card:hover {
+    transform: translateY(-5px);
+    background: #f0ede8;
+    box-shadow: 0 12px 32px rgba(27,48,34,0.1);
+  }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(6,27,14,0.72);
+    backdrop-filter: blur(5px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: #fcf9f4;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 540px;
+    max-height: 92vh;
+    overflow-y: auto;
+    box-shadow: 0 32px 80px rgba(6,27,14,0.35);
+  }
+
+  /* ── Mobile menu ── */
+  #mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: #fcf9f4;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  #mobile-menu.open { display: flex; }
+
+  /* ── Form inputs ── */
+  .form-input {
+    display: block;
+    width: 100%;
+    padding: 11px 14px;
+    background: white;
+    border: 1.5px solid #737973;
+    border-radius: 0.5rem;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 16px; /* 16px minimum prevents iOS auto-zoom on focus */
+    color: #1c1c19;
+    box-shadow: inset 0 2px 4px rgba(27,48,34,0.05);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-input:focus {
+    border-color: #061b0e;
+    box-shadow: inset 0 2px 4px rgba(27,48,34,0.05), 0 0 0 3px rgba(6,27,14,0.09);
+  }
+  .form-input.error {
+    border-color: #ba1a1a;
+    box-shadow: inset 0 2px 4px rgba(186,26,26,0.05), 0 0 0 3px rgba(186,26,26,0.1);
+  }
+  .form-label {
+    display: block;
+    font-family: Manrope, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #434843;
+    margin-bottom: 5px;
+  }
+  select.form-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23434843' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  /* ── FAB ── */
+  .fab-label {
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.35s cubic-bezier(.16,1,.3,1), padding-left 0.35s;
+    padding-left: 0;
+  }
+  .fab:hover .fab-label { max-width: 160px; padding-left: 8px; }
+  .fab { transition: transform 0.3s cubic-bezier(.16,1,.3,1), background-color 0.2s, box-shadow 0.2s; }
+
+  /* ── Nav link active ── */
+  .nav-link { position: relative; }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -4px;
+    height: 2px;
+    background: #061b0e;
+    transform: scaleX(0);
+    transition: transform 0.2s;
+    transform-origin: left;
+  }
+  .nav-link.active { color: #061b0e !important; }
+  .nav-link.active::after { transform: scaleX(1); }
+
+  /* ── Spinner ── */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 0.8s linear infinite; }
+
+  /* ── Chip ── */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-family: Manrope, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── Hero scroll height — responsive ── */
+  #hero { height: 250vh; }
+  @media (min-width: 768px) { #hero { height: 300vh; } }
+
+  /* ── Global button improvements ── */
+  button, [role="button"] {
+    touch-action: manipulation; /* eliminates 300ms tap delay on iOS/Android */
+  }
+  button:focus-visible, a:focus-visible {
+    outline: 3px solid #4d6453;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* ── Inline field error message ── */
+  .field-error {
+    display: none;
+    margin-top: 5px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 13px;
+    color: #ba1a1a;
+    align-items: center;
+    gap: 4px;
+  }
+  .field-error.visible { display: flex; }
+
+  /* ── Before/after keyboard focus ── */
+  #ba-slider:focus-visible {
+    outline: 3px solid #4d6453;
+    outline-offset: 3px;
+  }
+
+  /* ── Scroll progress bar ── */
+  #scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(to right, #061b0e, #7c5730);
+    z-index: 999;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+</style>
+</head>
+
+<body class="bg-background text-on-background antialiased">
+
+<!-- Skip to main content (keyboard / screen reader) -->
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:bg-primary focus:text-on-primary focus:font-manrope focus:text-xs focus:font-bold focus:uppercase focus:tracking-widest focus:py-3 focus:px-5 focus:rounded focus:shadow-lg">
+  Skip to main content
+</a>
+
+<!-- Scroll progress bar -->
+<div id="scroll-progress"></div>
+
+<!-- ══════════════════════════════════
+     NAVIGATION
+══════════════════════════════════ -->
+<nav id="navbar" class="fixed top-0 w-full z-50 bg-surface/95 backdrop-blur-md border-b border-outline-variant/25 transition-shadow duration-300">
+  <div class="max-w-7xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
+    <a href="#" onclick="scrollTo({top:0}); return false;" class="font-manrope text-lg font-black text-primary tracking-tight">
+      Down &amp; Dirty Landscaping
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#services" onclick="navTo('services')" class="nav-link font-manrope text-xs font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors">Services</a>
+      <a href="#gallery"  onclick="navTo('gallery')"  class="nav-link font-manrope text-xs font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors">Gallery</a>
+      <a href="#about"    onclick="navTo('about')"    class="nav-link font-manrope text-xs font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors">About</a>
+      <a href="#contact"  onclick="navTo('contact')"  class="nav-link font-manrope text-xs font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors">Contact</a>
+      <button onclick="openModal('quote-modal')" class="bg-primary text-on-primary font-manrope text-xs font-bold uppercase tracking-widest py-3 px-6 rounded hover:bg-surface-tint transition-colors active:scale-95">
+        Get a Quote
+      </button>
+    </div>
+    <button id="hamburger" onclick="toggleMobileMenu()" aria-label="Open menu" class="md:hidden p-2 flex flex-col gap-[5px]">
+      <span class="ham-line block w-6 h-[2px] bg-primary rounded transition-all duration-300 origin-center"></span>
+      <span class="ham-line block w-6 h-[2px] bg-primary rounded transition-all duration-300"></span>
+      <span class="ham-line block w-6 h-[2px] bg-primary rounded transition-all duration-300 origin-center"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════
+     MOBILE MENU
+══════════════════════════════════ -->
+<div id="mobile-menu" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
+    <span class="font-manrope text-lg font-black text-primary">Down &amp; Dirty</span>
+    <button onclick="toggleMobileMenu()" aria-label="Close menu" class="p-1">
+      <span class="material-symbols-outlined text-on-surface-variant">close</span>
+    </button>
+  </div>
+  <nav class="flex flex-col px-6 py-6 gap-1 flex-1">
+    <a href="#services" onclick="navTo('services');toggleMobileMenu()" class="py-4 font-manrope text-xl font-bold text-primary border-b border-outline-variant/20">Services</a>
+    <a href="#gallery"  onclick="navTo('gallery');toggleMobileMenu()"  class="py-4 font-manrope text-xl font-bold text-primary border-b border-outline-variant/20">Gallery</a>
+    <a href="#about"    onclick="navTo('about');toggleMobileMenu()"    class="py-4 font-manrope text-xl font-bold text-primary border-b border-outline-variant/20">About</a>
+    <a href="#contact"  onclick="navTo('contact');toggleMobileMenu()"  class="py-4 font-manrope text-xl font-bold text-primary border-b border-outline-variant/20">Contact</a>
+  </nav>
+  <div class="px-6 pb-8">
+    <button onclick="openModal('quote-modal');toggleMobileMenu();" class="w-full bg-primary text-on-primary font-manrope text-xs font-bold uppercase tracking-widest py-4 rounded hover:bg-surface-tint transition-colors">
+      Get a Free Quote
+    </button>
+  </div>
+</div>
+
+<main id="main-content">
+
+<!-- ══════════════════════════════════
+     HERO — SCROLL-DRIVEN VIDEO
+══════════════════════════════════ -->
+<section id="hero" style="position: relative;">
+  <div id="hero-sticky">
+
+    <!-- Video frame canvas — hidden from screen readers, content conveyed by text below -->
+    <canvas id="hero-canvas" aria-hidden="true" role="presentation"></canvas>
+
+    <!-- Bottom gradient fade into page -->
+    <div id="hero-bottom-fade"></div>
+
+    <!-- Loading overlay -->
+    <div id="hero-loader">
+      <div style="text-align:center;">
+        <div style="font-family:Manrope,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#819986;margin-bottom:16px;" id="load-text">Loading</div>
+        <div style="width:200px;height:3px;background:rgba(255,255,255,0.08);border-radius:999px;overflow:hidden;margin:0 auto;">
+          <div id="load-bar" style="height:100%;width:0%;background:linear-gradient(to right,#1b3022,#7c5730);border-radius:999px;transition:width 0.2s;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero content overlay — fades as you scroll -->
+    <div id="hero-overlay">
+      <!-- Badge -->
+      <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:24px;padding:8px 18px;background:rgba(27,48,34,0.88);backdrop-filter:blur(8px);border-radius:999px;">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:15px;color:#7c5730;">star</span>
+        <span style="font-family:Manrope,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#d0e9d4;">4.9 Stars · 150+ Projects Completed</span>
+      </div>
+
+      <!-- H1 -->
+      <h1 style="font-family:Manrope,sans-serif;font-weight:800;color:white;letter-spacing:-0.02em;line-height:1.05;margin-bottom:20px;text-shadow:0 2px 24px rgba(0,0,0,0.4);font-size:clamp(2.5rem,6vw,5rem);">
+        Transform Your<br>Outdoor Space
+      </h1>
+
+      <!-- Tagline -->
+      <p style="font-family:'Be Vietnam Pro',sans-serif;font-size:clamp(15px,1.8vw,19px);color:rgba(255,255,255,0.88);max-width:540px;line-height:1.65;margin-bottom:36px;text-shadow:0 1px 10px rgba(0,0,0,0.4);">
+        We bring rugged expertise to refined landscapes. From hardscaping to total yard overhauls, we build outdoor spaces meant to be lived in.
+      </p>
+
+      <!-- CTAs -->
+      <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;">
+        <button onclick="openModal('quote-modal')" style="background:#061b0e;color:white;font-family:Manrope,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:14px 36px;border-radius:0.5rem;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(27,48,34,0.3);transition:background 0.2s,transform 0.15s;" onmouseover="this.style.background='#4d6453'" onmouseout="this.style.background='#061b0e'">
+          Get a Free Quote
+        </button>
+        <a href="#gallery" onclick="navTo('gallery')" style="background:transparent;color:white;font-family:Manrope,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:13px 36px;border-radius:0.5rem;border:2px solid rgba(255,255,255,0.55);cursor:pointer;text-decoration:none;transition:border-color 0.2s,background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">
+          View Our Work
+        </a>
+      </div>
+
+      <!-- Scroll hint -->
+      <div id="scroll-hint" style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0.65;transition:opacity 0.4s;">
+        <span style="font-family:Manrope,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:white;">Scroll</span>
+        <div style="width:1px;height:40px;background:linear-gradient(to bottom,white,transparent);"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     STATS
+══════════════════════════════════ -->
+<section id="stats" class="py-14 bg-primary">
+  <div class="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-2">
+    <div class="text-center py-6 px-4 reveal">
+      <div class="font-manrope font-black text-primary-fixed mb-1" style="font-size:2.5rem;" data-counter data-target="150" data-suffix="+">0+</div>
+      <div class="font-manrope text-xs font-bold uppercase tracking-wider text-on-primary-container opacity-80">Projects Completed</div>
+    </div>
+    <div class="text-center py-6 px-4 reveal reveal-delay-1">
+      <div class="font-manrope font-black text-primary-fixed mb-1" style="font-size:2.5rem;" data-counter data-target="12" data-suffix=" yrs">0 yrs</div>
+      <div class="font-manrope text-xs font-bold uppercase tracking-wider text-on-primary-container opacity-80">Experience</div>
+    </div>
+    <div class="text-center py-6 px-4 reveal reveal-delay-2">
+      <div class="font-manrope font-black text-primary-fixed mb-1" style="font-size:2.5rem;" data-counter data-target="49" data-display="4.9★">4.9★</div>
+      <div class="font-manrope text-xs font-bold uppercase tracking-wider text-on-primary-container opacity-80">Star Rating</div>
+    </div>
+    <div class="text-center py-6 px-4 reveal reveal-delay-3">
+      <div class="font-manrope font-black text-primary-fixed mb-1" style="font-size:2.5rem;" data-counter data-target="100" data-suffix="%">0%</div>
+      <div class="font-manrope text-xs font-bold uppercase tracking-wider text-on-primary-container opacity-80">Satisfaction Rate</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SERVICES
+══════════════════════════════════ -->
+<section id="services" class="py-24 bg-surface px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <div class="font-manrope text-xs font-bold uppercase tracking-widest text-secondary mb-3">What We Do</div>
+      <h2 class="font-manrope font-extrabold text-primary mb-4" style="font-size:clamp(2rem,4vw,3rem);">Our Services</h2>
+      <p class="font-vietnam text-lg text-on-surface-variant max-w-lg mx-auto">
+        From the ground up — we handle every aspect of your outdoor transformation.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="service-card reveal">
+        <div class="w-11 h-11 bg-primary-container rounded-lg flex items-center justify-center mb-5">
+          <span class="material-symbols-outlined text-primary-fixed" style="font-size:22px;">landscape</span>
+        </div>
+        <h3 class="font-manrope text-lg font-bold text-primary mb-3">Hardscaping</h3>
+        <p class="font-vietnam text-sm text-on-surface-variant leading-relaxed mb-5">Custom patios, walkways, driveways, and outdoor structures built with natural stone and premium materials that last a lifetime.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="chip bg-primary/10 text-primary">Patios</span>
+          <span class="chip bg-primary/10 text-primary">Walkways</span>
+          <span class="chip bg-primary/10 text-primary">Stone Work</span>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="w-11 h-11 bg-primary-container rounded-lg flex items-center justify-center mb-5">
+          <span class="material-symbols-outlined text-primary-fixed" style="font-size:22px;">grass</span>
+        </div>
+        <h3 class="font-manrope text-lg font-bold text-primary mb-3">Lawn Care &amp; Maintenance</h3>
+        <p class="font-vietnam text-sm text-on-surface-variant leading-relaxed mb-5">Professional mowing, aeration, overseeding, fertilization, and seasonal cleanup to keep your lawn lush year-round.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="chip bg-primary/10 text-primary">Mowing</span>
+          <span class="chip bg-primary/10 text-primary">Aeration</span>
+          <span class="chip bg-primary/10 text-primary">Fertilization</span>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="w-11 h-11 bg-primary-container rounded-lg flex items-center justify-center mb-5">
+          <span class="material-symbols-outlined text-primary-fixed" style="font-size:22px;">water_drop</span>
+        </div>
+        <h3 class="font-manrope text-lg font-bold text-primary mb-3">Irrigation Systems</h3>
+        <p class="font-vietnam text-sm text-on-surface-variant leading-relaxed mb-5">Smart irrigation design, installation, and repair. We ensure your plants get exactly what they need, when they need it.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="chip bg-primary/10 text-primary">Installation</span>
+          <span class="chip bg-primary/10 text-primary">Smart Control</span>
+          <span class="chip bg-primary/10 text-primary">Repair</span>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="w-11 h-11 bg-primary-container rounded-lg flex items-center justify-center mb-5">
+          <span class="material-symbols-outlined text-primary-fixed" style="font-size:22px;">foundation</span>
+        </div>
+        <h3 class="font-manrope text-lg font-bold text-primary mb-3">Retaining Walls</h3>
+        <p class="font-vietnam text-sm text-on-surface-variant leading-relaxed mb-5">Structural and decorative retaining walls using natural stone, block, or timber to manage erosion and add visual drama.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="chip bg-primary/10 text-primary">Natural Stone</span>
+          <span class="chip bg-primary/10 text-primary">Block</span>
+          <span class="chip bg-primary/10 text-primary">Grading</span>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="w-11 h-11 bg-primary-container rounded-lg flex items-center justify-center mb-5">
+          <span class="material-symbols-outlined text-primary-fixed" style="font-size:22px;">local_florist</span>
+        </div>
+        <h3 class="font-manrope text-lg font-bold text-primary mb-3">Garden Design &amp; Planting</h3>
+        <p class="font-vietnam text-sm text-on-surface-variant leading-relaxed mb-5">Curated plant selections, flower beds, shrubs, and tree plantings designed to thrive in your local climate year after year.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="chip bg-primary/10 text-primary">Flower Beds</span>
+          <span class="chip bg-primary/10 text-primary">Trees &amp; Shrubs</span>
+          <span class="chip bg-primary/10 text-primary">Mulching</span>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-2" style="background:#fdf6ee;">
+        <div class="w-11 h-11 bg-secondary-container rounded-lg flex items-center justify-center mb-5">
+          <span class="material-symbols-outlined text-on-secondary-container" style="font-size:22px;">outdoor_grill</span>
+        </div>
+        <h3 class="font-manrope text-lg font-bold text-primary mb-3">Outdoor Living Spaces</h3>
+        <p class="font-vietnam text-sm text-on-surface-variant leading-relaxed mb-5">Custom fire pits, pergolas, outdoor kitchens, and seating areas that turn your backyard into a true living extension of your home.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="chip bg-secondary/10 text-secondary">Fire Pits</span>
+          <span class="chip bg-secondary/10 text-secondary">Pergolas</span>
+          <span class="chip bg-secondary/10 text-secondary">Kitchens</span>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-12 reveal">
+      <button onclick="openModal('quote-modal')" class="bg-secondary text-on-secondary font-manrope text-xs font-bold uppercase tracking-widest py-4 px-10 rounded hover:opacity-90 transition-all active:scale-95 shadow-[0_4px_16px_rgba(124,87,48,0.2)]">
+        Request a Free Estimate
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     GALLERY + BEFORE/AFTER
+══════════════════════════════════ -->
+<section id="gallery" class="py-24 bg-surface-container-low px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <div class="font-manrope text-xs font-bold uppercase tracking-widest text-secondary mb-3">Our Portfolio</div>
+      <h2 class="font-manrope font-extrabold text-primary mb-4" style="font-size:clamp(2rem,4vw,3rem);">See the Transformation</h2>
+      <p class="font-vietnam text-lg text-on-surface-variant max-w-lg mx-auto">Real results from real projects. Drag the slider below to compare before and after.</p>
+    </div>
+
+    <!-- Before / After Slider -->
+    <div class="max-w-4xl mx-auto mb-5 reveal">
+      <div id="ba-slider" class="ba-wrap" style="height:440px;">
+        <img class="ba-after" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;" src="Fixed%20Lawn.png" alt="After: lush green lawn with stepping stones"/>
+        <span class="ba-label" style="right:14px;">After</span>
+        <div id="ba-before-layer" class="ba-before-layer">
+          <img draggable="false" style="width:100%;height:100%;object-fit:cover;pointer-events:none;" src="Busted%20Lawn.png" alt="Before: damaged dry lawn"/>
+          <span class="ba-label" style="left:14px;">Before</span>
+        </div>
+        <div id="ba-handle" class="ba-handle">
+          <div class="ba-handle-btn">
+            <span class="material-symbols-outlined" style="font-size:18px;color:#1b3022;">chevron_left</span>
+            <span class="material-symbols-outlined" style="font-size:18px;color:#1b3022;">chevron_right</span>
+          </div>
+        </div>
+      </div>
+      <p class="text-center font-manrope text-xs font-bold uppercase tracking-wider text-on-surface-variant mt-3 opacity-50">← Drag to compare →</p>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="flex flex-wrap gap-3 justify-center mb-10 reveal">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="hardscaping">Hardscaping</button>
+      <button class="filter-btn" data-filter="lawn-care">Lawn Care</button>
+      <button class="filter-btn" data-filter="irrigation">Irrigation</button>
+      <button class="filter-btn" data-filter="garden">Garden Design</button>
+      <button class="filter-btn" data-filter="outdoor-living">Outdoor Living</button>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="project-card reveal" data-category="hardscaping">
+        <div class="img-wrap"><img src="https://picsum.photos/seed/patio-stone/600/440" alt="Backyard Patio" loading="lazy"/></div>
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <h3 class="font-manrope text-sm font-bold text-primary">Backyard Patio Transformation</h3>
+            <span class="chip bg-primary/10 text-primary flex-shrink-0">Hardscaping</span>
+          </div>
+          <p class="font-vietnam text-sm text-on-surface-variant">Natural bluestone patio with built-in seating wall and custom low-voltage lighting.</p>
+        </div>
+      </div>
+      <div class="project-card reveal reveal-delay-1" data-category="lawn-care">
+        <div class="img-wrap"><img src="https://picsum.photos/seed/front-lawn/600/440" alt="Lawn Installation" loading="lazy"/></div>
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <h3 class="font-manrope text-sm font-bold text-primary">Front Yard Sod Installation</h3>
+            <span class="chip bg-primary/10 text-primary flex-shrink-0">Lawn Care</span>
+          </div>
+          <p class="font-vietnam text-sm text-on-surface-variant">Complete lawn renovation with premium sod, topsoil grading, and clean edge definition.</p>
+        </div>
+      </div>
+      <div class="project-card reveal reveal-delay-2" data-category="irrigation">
+        <div class="img-wrap"><img src="https://picsum.photos/seed/irrigation-heads/600/440" alt="Irrigation System" loading="lazy"/></div>
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <h3 class="font-manrope text-sm font-bold text-primary">Smart Irrigation System</h3>
+            <span class="chip bg-primary/10 text-primary flex-shrink-0">Irrigation</span>
+          </div>
+          <p class="font-vietnam text-sm text-on-surface-variant">12-zone smart irrigation with weather-based controllers for a 2-acre property.</p>
+        </div>
+      </div>
+      <div class="project-card reveal" data-category="hardscaping">
+        <div class="img-wrap"><img src="https://picsum.photos/seed/stone-wall/600/440" alt="Retaining Wall" loading="lazy"/></div>
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <h3 class="font-manrope text-sm font-bold text-primary">Natural Stone Retaining Wall</h3>
+            <span class="chip bg-primary/10 text-primary flex-shrink-0">Hardscaping</span>
+          </div>
+          <p class="font-vietnam text-sm text-on-surface-variant">60-foot fieldstone retaining wall with integrated planters and drainage system.</p>
+        </div>
+      </div>
+      <div class="project-card reveal reveal-delay-1" data-category="garden">
+        <div class="img-wrap"><img src="https://picsum.photos/seed/perennial-beds/600/440" alt="Garden Design" loading="lazy"/></div>
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <h3 class="font-manrope text-sm font-bold text-primary">Perennial Garden Redesign</h3>
+            <span class="chip bg-primary/10 text-primary flex-shrink-0">Garden Design</span>
+          </div>
+          <p class="font-vietnam text-sm text-on-surface-variant">Four-season perennial beds with native plants, ornamental grasses, and river rock edging.</p>
+        </div>
+      </div>
+      <div class="project-card reveal reveal-delay-2" data-category="outdoor-living">
+        <div class="img-wrap"><img src="https://picsum.photos/seed/firepit-seat/600/440" alt="Fire Pit Area" loading="lazy"/></div>
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <h3 class="font-manrope text-sm font-bold text-primary">Stone Fire Pit &amp; Seating Area</h3>
+            <span class="chip bg-secondary/10 text-secondary flex-shrink-0">Outdoor Living</span>
+          </div>
+          <p class="font-vietnam text-sm text-on-surface-variant">Custom stone fire pit with curved flagstone seating wall and ambient landscape lighting.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     REVIEWS
+══════════════════════════════════ -->
+<section id="reviews" class="py-24 bg-surface px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <div class="flex text-secondary">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+        </div>
+        <span class="font-manrope text-2xl font-extrabold text-primary">4.9 / 5</span>
+      </div>
+      <h2 class="font-manrope font-extrabold text-primary" style="font-size:clamp(2rem,4vw,3rem);">Trusted by Local Homeowners</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-surface-container-low p-7 rounded-lg border border-outline-variant/30 shadow-[0_4px_12px_rgba(27,48,34,0.05)] reveal">
+        <div class="flex text-secondary mb-4">
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+        </div>
+        <p class="font-vietnam text-base text-on-surface-variant italic leading-relaxed mb-6">"They completely transformed our overgrown backyard into a beautiful patio space. The crew was professional, cleaned up every day, and the stonework is incredible."</p>
+        <div class="flex items-center gap-3">
+          <img alt="Sarah Jenkins" class="w-11 h-11 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIszdrwaLPe8MRxyDBBY9PsqxaGQUKVh7JKUj03WwPagwkpvuO5NDuEb3oQbyX7VEGE_kAbKR33_Lcc7nO389T2JCWizM_PK6H0udEg6LKzplR12bqAAw1mzfplkX64LqnbUS4pcfMTWomjqEJYeT9s8qwgjTeyAkBEmp9tH25yS7xSR9FSDdRNIErfzmxcMAOVSXZjmTiCpz15aHOxPk3tP3_U5eBYtnOUYLwJOEmEpoFdkMQ7ZH3GqZx8KihijWqvScCcgxHfPg"/>
+          <div>
+            <div class="font-manrope text-sm font-bold text-primary">Sarah Jenkins</div>
+            <div class="font-vietnam text-xs text-on-surface-variant">Backyard Patio Project</div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-surface-container-low p-7 rounded-lg border border-outline-variant/30 shadow-[0_4px_12px_rgba(27,48,34,0.05)] reveal reveal-delay-1">
+        <div class="flex text-secondary mb-4">
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+        </div>
+        <p class="font-vietnam text-base text-on-surface-variant italic leading-relaxed mb-6">"Down and Dirty leveled our sloped yard and installed a retaining wall that looks both natural and sturdy. Honest pricing and genuinely hard workers."</p>
+        <div class="flex items-center gap-3">
+          <img alt="Mark Thompson" class="w-11 h-11 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBANADIMqahsTTbH-ohc-4BBE-UdU34v-PpEcBdT0YWE2h2J35Mtlapg_5--SAVSa2BID1twP-QyUdNKw1-jVPwIik95mgmZoVL_fNceLtf5h-3gAf6fa6w8NyrzNdRtHbDFACQLKwjc4bVlzuRPLOH6hr_dCO5uu7q6VBeo7em2q7w4ckesaMwcScaQUHqtgW4SmrDQryQuKyuKSzM7caXFarPpWO2supPFwqXYn4qS3K96R96ka2Ie1Gk4h3BotnBqH60xZKrPoc"/>
+          <div>
+            <div class="font-manrope text-sm font-bold text-primary">Mark Thompson</div>
+            <div class="font-vietnam text-xs text-on-surface-variant">Retaining Wall Project</div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-surface-container-low p-7 rounded-lg border border-outline-variant/30 shadow-[0_4px_12px_rgba(27,48,34,0.05)] reveal reveal-delay-2">
+        <div class="flex text-secondary mb-4">
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+        </div>
+        <p class="font-vietnam text-base text-on-surface-variant italic leading-relaxed mb-6">"The new irrigation system and sod installation was flawless. They took the time to explain how to maintain it. My lawn has never looked better."</p>
+        <div class="flex items-center gap-3">
+          <img alt="Emily Carter" class="w-11 h-11 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-Vfr8wCNx2ybh_jITLYsxKGvBDwIiqGmCXlSqFeFN5nfI3pYusi0X-M1qwnvcWcNcOidWv8LwHeKUoUt1PNVd1AExxJx7leQhtm0J3AyyFC8j6BwTi4VuU268TlpxuVemaIz4_9TEchQTjY4yv6gIF8jDncT852MdGA0mUDunUh2HpmYwjj6u1Es1QRuO4M45-ZOg3KKYmcbwRR0ADc6bm2yaPjN6a_TKYaa6DC8n--a4bSXMjjGAJxl72ydJ5NcBZV2f5ygdYdE"/>
+          <div>
+            <div class="font-manrope text-sm font-bold text-primary">Emily Carter</div>
+            <div class="font-vietnam text-xs text-on-surface-variant">Irrigation &amp; Lawn Project</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     ABOUT
+══════════════════════════════════ -->
+<section id="about" class="py-24 bg-primary-container px-6 md:px-10 overflow-hidden">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <div class="reveal">
+      <div class="font-manrope text-xs font-bold uppercase tracking-widest text-on-primary-container mb-3">Our Story</div>
+      <h2 class="font-manrope font-extrabold text-primary-fixed mb-6" style="font-size:clamp(2rem,4vw,3rem);line-height:1.1;">Built on Craft,<br>Grown by Trust</h2>
+      <p class="font-vietnam text-lg text-on-primary-container leading-relaxed mb-5">Down and Dirty Landscaping was founded in 2012 by a father and son who believed that great outdoor spaces start with honest hard work. What began as a two-man operation has grown into a full-service company with a crew of 12 certified professionals.</p>
+      <p class="font-vietnam text-lg text-on-primary-container leading-relaxed mb-10">We serve homeowners who want their outdoor space to reflect the same quality as the inside of their home — people who value craftsmanship, reliability, and a clean job site at the end of every day.</p>
+      <div class="grid grid-cols-3 gap-6">
+        <div class="border-t-2 border-primary-fixed/30 pt-4">
+          <div class="font-manrope text-lg font-black text-primary-fixed mb-1">Licensed &amp; Insured</div>
+          <div class="font-manrope text-xs font-bold uppercase tracking-wider text-on-primary-container opacity-60">Full Coverage</div>
+        </div>
+        <div class="border-t-2 border-primary-fixed/30 pt-4">
+          <div class="font-manrope text-lg font-black text-primary-fixed mb-1">Family Owned</div>
+          <div class="font-manrope text-xs font-bold uppercase tracking-wider text-on-primary-container opacity-60">Since 2012</div>
+        </div>
+        <div class="border-t-2 border-primary-fixed/30 pt-4">
+          <div class="font-manrope text-lg font-black text-primary-fixed mb-1">12-Person Crew</div>
+          <div class="font-manrope text-xs font-bold uppercase tracking-wider text-on-primary-container opacity-60">Certified Pros</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4 reveal reveal-delay-1">
+      <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRReYOQYsJ-fBjbyKGQlWtsoh2sgFN0B1_1Lzx38XFvx0iFm-6BNi8w7ezTD2Npr7vT28LFdM1ArjEJROovIPElVsc71hGoZJZyU8NDmeO4cd-_0ymiNbdJRDThhIOGG9wmNd51iy75okSQh7KkfKM3vbR1dUBd7pWudF0xd_VhdOaQ89tl_Ancs09vsVJLqEJQJWxMQPRMq_-Ly38kwGMRCx8wpcJKvTK_WWJJdpX8R2f5CRQxyLV1MZtm2XDgfI3Qc4BYKZ5I3A" alt="Landscaped property" class="col-span-2 w-full h-52 object-cover rounded-lg"/>
+      <img src="https://picsum.photos/seed/crew-work/400/320" alt="Crew at work" class="w-full h-44 object-cover rounded-lg"/>
+      <img src="https://picsum.photos/seed/landscape-tools/400/320" alt="Professional tools" class="w-full h-44 object-cover rounded-lg"/>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     CTA BANNER
+══════════════════════════════════ -->
+<section class="py-20 bg-secondary px-6 md:px-10">
+  <div class="max-w-3xl mx-auto text-center reveal">
+    <h2 class="font-manrope font-extrabold text-on-secondary mb-4" style="font-size:clamp(1.75rem,4vw,3rem);">Ready to Transform Your Yard?</h2>
+    <p class="font-vietnam text-lg text-on-secondary/75 mb-8 max-w-xl mx-auto">We offer free on-site estimates. Tell us about your project and we'll respond within 24 hours.</p>
+    <button onclick="openModal('quote-modal')" class="bg-on-secondary text-secondary font-manrope text-xs font-bold uppercase tracking-widest py-4 px-12 rounded hover:opacity-90 transition-all active:scale-95">Get Your Free Quote</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     CONTACT
+══════════════════════════════════ -->
+<section id="contact" class="py-24 bg-surface px-6 md:px-10">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-12 reveal">
+      <div class="font-manrope text-xs font-bold uppercase tracking-widest text-secondary mb-3">Get in Touch</div>
+      <h2 class="font-manrope font-extrabold text-primary mb-4" style="font-size:clamp(2rem,4vw,3rem);">Request a Free Quote</h2>
+      <p class="font-vietnam text-lg text-on-surface-variant">Fill out the form below and we'll get back to you within one business day with a detailed estimate.</p>
+    </div>
+    <div class="bg-surface-container-low rounded-xl border border-outline-variant/30 shadow-[0_8px_32px_rgba(27,48,34,0.08)] overflow-hidden reveal">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-outline-variant/20 bg-surface-container">
+        <div class="flex items-center gap-3 px-6 py-5">
+          <div class="w-9 h-9 bg-primary-container rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary-fixed" style="font-size:17px;">call</span>
+          </div>
+          <div>
+            <div class="font-manrope text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-0.5">Call Us</div>
+            <a href="tel:+15551234567" class="font-manrope text-sm font-bold text-primary hover:text-surface-tint transition-colors">(555) 123-4567</a>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 px-6 py-5">
+          <div class="w-9 h-9 bg-primary-container rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary-fixed" style="font-size:17px;">mail</span>
+          </div>
+          <div>
+            <div class="font-manrope text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-0.5">Email</div>
+            <a href="mailto:info@downanddirty.com" class="font-manrope text-sm font-bold text-primary hover:text-surface-tint transition-colors">info@downanddirty.com</a>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 px-6 py-5">
+          <div class="w-9 h-9 bg-primary-container rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary-fixed" style="font-size:17px;">schedule</span>
+          </div>
+          <div>
+            <div class="font-manrope text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-0.5">Hours</div>
+            <span class="font-manrope text-sm font-bold text-primary">Mon–Sat 7am–6pm</span>
+          </div>
+        </div>
+      </div>
+      <form id="quote-form" onsubmit="handleQuoteSubmit(event)" novalidate class="p-8 md:p-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+          <div>
+            <label class="form-label" for="fn">First Name <span class="text-error">*</span></label>
+            <input class="form-input" id="fn" name="firstName" type="text" placeholder="John" required autocomplete="given-name" aria-describedby="fn-error"/>
+            <span class="field-error" id="fn-error" role="alert">Please enter your first name.</span>
+          </div>
+          <div>
+            <label class="form-label" for="ln">Last Name <span class="text-error">*</span></label>
+            <input class="form-input" id="ln" name="lastName" type="text" placeholder="Smith" required autocomplete="family-name" aria-describedby="ln-error"/>
+            <span class="field-error" id="ln-error" role="alert">Please enter your last name.</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+          <div>
+            <label class="form-label" for="em">Email <span class="text-error">*</span></label>
+            <input class="form-input" id="em" name="email" type="email" placeholder="john@example.com" required autocomplete="email" aria-describedby="em-error"/>
+            <span class="field-error" id="em-error" role="alert">Please enter a valid email address.</span>
+          </div>
+          <div>
+            <label class="form-label" for="ph">Phone <span class="text-error">*</span></label>
+            <input class="form-input" id="ph" name="phone" type="tel" placeholder="(555) 000-0000" required autocomplete="tel" aria-describedby="ph-error"/>
+            <span class="field-error" id="ph-error" role="alert">Please enter your phone number.</span>
+          </div>
+        </div>
+        <div class="mb-5">
+          <label class="form-label" for="svc">Service Type <span class="text-error">*</span></label>
+          <select class="form-input" id="svc" name="service" required aria-describedby="svc-error">
+            <option value="">Select a service...</option>
+            <option value="hardscaping">Hardscaping (Patio, Walkway, Driveway)</option>
+            <option value="lawn-care">Lawn Care &amp; Maintenance</option>
+            <option value="irrigation">Irrigation System</option>
+            <option value="retaining-wall">Retaining Wall</option>
+            <option value="garden-design">Garden Design &amp; Planting</option>
+            <option value="outdoor-living">Outdoor Living Spaces</option>
+            <option value="multiple">Multiple Services</option>
+            <option value="other">Other / Not Sure</option>
+          </select>
+          <span class="field-error" id="svc-error" role="alert">Please select a service type.</span>
+        </div>
+        <div class="mb-5">
+          <label class="form-label" for="desc">Tell Us About Your Project <span class="text-error">*</span></label>
+          <textarea class="form-input" id="desc" name="description" rows="4" placeholder="Describe your project, yard size, timeline, and any special requirements..." required aria-describedby="desc-error"></textarea>
+          <span class="field-error" id="desc-error" role="alert">Please describe your project.</span>
+        </div>
+        <div class="mb-8">
+          <label class="form-label" for="hear">How Did You Hear About Us?</label>
+          <select class="form-input" id="hear" name="hearAbout">
+            <option value="">Select...</option>
+            <option value="google">Google Search</option>
+            <option value="referral">Friend or Neighbor Referral</option>
+            <option value="social">Social Media</option>
+            <option value="nextdoor">Nextdoor</option>
+            <option value="sign">Yard Sign</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <button type="submit" id="submit-btn" class="w-full bg-primary text-on-primary font-manrope text-xs font-bold uppercase tracking-widest py-4 px-8 rounded hover:bg-surface-tint transition-all duration-200 shadow-[0_4px_16px_rgba(27,48,34,0.2)] active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60">
+          <span id="submit-text">Submit Quote Request</span>
+          <span id="submit-spinner" class="hidden material-symbols-outlined spin" style="font-size:20px;">autorenew</span>
+        </button>
+      </form>
+      <div id="form-success" class="hidden p-10 text-center">
+        <div class="w-16 h-16 bg-primary-container rounded-full flex items-center justify-center mx-auto mb-5">
+          <span class="material-symbols-outlined text-primary-fixed text-3xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
+        </div>
+        <h3 class="font-manrope text-2xl font-extrabold text-primary mb-3">Quote Request Sent!</h3>
+        <p class="font-vietnam text-base text-on-surface-variant max-w-sm mx-auto">Thank you! We'll review your project and get back to you within one business day with a detailed, no-obligation estimate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════════════════════
+     FOOTER
+══════════════════════════════════ -->
+<footer class="bg-primary text-on-primary pt-16 pb-10 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+      <div class="lg:col-span-2">
+        <div class="font-manrope text-lg font-black text-primary-fixed mb-3 tracking-tight">Down &amp; Dirty Landscaping</div>
+        <p class="font-vietnam text-sm text-on-primary-container leading-relaxed mb-6 max-w-xs">Rugged expertise meets refined results. Serving local homeowners since 2012 with honest pricing and quality craft.</p>
+        <div class="flex gap-3">
+          <a href="tel:+15551234567" aria-label="Call us" class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center hover:bg-surface-tint transition-colors">
+            <span class="material-symbols-outlined text-on-primary-container" style="font-size:20px;">call</span>
+          </a>
+          <a href="mailto:info@downanddirty.com" aria-label="Email us" class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center hover:bg-surface-tint transition-colors">
+            <span class="material-symbols-outlined text-on-primary-container" style="font-size:20px;">mail</span>
+          </a>
+          <a href="#" aria-label="Facebook" class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center hover:bg-surface-tint transition-colors">
+            <span class="material-symbols-outlined text-on-primary-container" style="font-size:20px;">public</span>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="font-manrope text-xs font-bold uppercase tracking-wider text-on-primary-container mb-5">Services</div>
+        <div class="flex flex-col gap-3">
+          <a href="#services" onclick="navTo('services')" class="font-vietnam text-sm text-on-primary-container hover:text-primary-fixed transition-colors">Hardscaping</a>
+          <a href="#services" onclick="navTo('services')" class="font-vietnam text-sm text-on-primary-container hover:text-primary-fixed transition-colors">Lawn Care</a>
+          <a href="#services" onclick="navTo('services')" class="font-vietnam text-sm text-on-primary-container hover:text-primary-fixed transition-colors">Irrigation</a>
+          <a href="#services" onclick="navTo('services')" class="font-vietnam text-sm text-on-primary-container hover:text-primary-fixed transition-colors">Retaining Walls</a>
+          <a href="#services" onclick="navTo('services')" class="font-vietnam text-sm text-on-primary-container hover:text-primary-fixed transition-colors">Outdoor Living</a>
+        </div>
+      </div>
+      <div>
+        <div class="font-manrope text-xs font-bold uppercase tracking-wider text-on-primary-container mb-5">Company</div>
+        <div class="flex flex-col gap-3">
+          <a href="#about"   onclick="navTo('about')"   class="font-vietnam text-sm text-on-primary-container hover:text-primary-fixed transition-colors">About Us</a>
+          <a href="#gallery" onclick="navTo('gallery')" class="font-vietnam text-sm text-on-primary-container hover:text-primary-fixed transition-colors">Gallery</a>
+          <a href="#contact" onclick="navTo('contact')" class="font-vietnam text-sm text-on-primary-container hover:text-primary-fixed transition-colors">Contact</a>
+          <a href="#"        class="font-vietnam text-sm text-on-primary-container hover:text-primary-fixed transition-colors">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="pt-8 border-t border-primary-container/60 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="font-vietnam text-xs text-on-primary-container opacity-50">© 2024 Down and Dirty Landscaping. All rights reserved.</p>
+      <p class="font-vietnam text-xs text-on-primary-container opacity-50">Licensed &amp; Insured · Family Owned Since 2012</p>
+    </div>
+  </div>
+</footer>
+
+<!-- FAB -->
+<button id="fab" onclick="navTo('contact')" aria-label="Schedule a Visit" class="fab fixed bottom-8 right-8 z-50 bg-primary text-on-primary h-14 px-4 rounded-full shadow-[0_8px_28px_rgba(27,48,34,0.28)] hover:bg-surface-tint hover:shadow-[0_12px_36px_rgba(27,48,34,0.35)] flex items-center overflow-hidden">
+  <span class="material-symbols-outlined flex-shrink-0" style="font-size:22px;">calendar_month</span>
+  <span class="fab-label font-manrope text-xs font-bold uppercase tracking-widest">Schedule a Visit</span>
+</button>
+
+<!-- Quote Modal -->
+<div id="quote-modal" class="modal-overlay" onclick="handleOverlayClick(event,'quote-modal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/25">
+      <h2 class="font-manrope text-xl font-extrabold text-primary">Get a Free Quote</h2>
+      <button onclick="closeModal('quote-modal')" aria-label="Close" class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container transition-colors">
+        <span class="material-symbols-outlined text-on-surface-variant" style="font-size:20px;">close</span>
+      </button>
+    </div>
+    <form id="modal-form" onsubmit="handleModalSubmit(event)" novalidate class="p-6 space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="form-label" for="m-fn">First Name <span class="text-error">*</span></label>
+          <input class="form-input" id="m-fn" type="text" placeholder="John" required autocomplete="given-name"/>
+        </div>
+        <div>
+          <label class="form-label" for="m-ln">Last Name <span class="text-error">*</span></label>
+          <input class="form-input" id="m-ln" type="text" placeholder="Smith" required autocomplete="family-name"/>
+        </div>
+      </div>
+      <div>
+        <label class="form-label" for="m-em">Email <span class="text-error">*</span></label>
+        <input class="form-input" id="m-em" type="email" placeholder="john@example.com" required autocomplete="email"/>
+      </div>
+      <div>
+        <label class="form-label" for="m-ph">Phone <span class="text-error">*</span></label>
+        <input class="form-input" id="m-ph" type="tel" placeholder="(555) 000-0000" required autocomplete="tel"/>
+      </div>
+      <div>
+        <label class="form-label" for="m-svc">Service Type <span class="text-error">*</span></label>
+        <select class="form-input" id="m-svc" required>
+          <option value="">Select a service...</option>
+          <option value="hardscaping">Hardscaping</option>
+          <option value="lawn-care">Lawn Care &amp; Maintenance</option>
+          <option value="irrigation">Irrigation System</option>
+          <option value="retaining-wall">Retaining Wall</option>
+          <option value="garden-design">Garden Design &amp; Planting</option>
+          <option value="outdoor-living">Outdoor Living Spaces</option>
+          <option value="multiple">Multiple Services</option>
+          <option value="other">Other / Not Sure</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label" for="m-desc">Project Description</label>
+        <textarea class="form-input" id="m-desc" rows="3" placeholder="Tell us about your project..."></textarea>
+      </div>
+      <button type="submit" class="w-full bg-primary text-on-primary font-manrope text-xs font-bold uppercase tracking-widest py-4 rounded hover:bg-surface-tint transition-all active:scale-95">Submit Quote Request</button>
+    </form>
+    <div id="modal-success" class="hidden p-10 text-center">
+      <div class="w-14 h-14 bg-primary-container rounded-full flex items-center justify-center mx-auto mb-4">
+        <span class="material-symbols-outlined text-primary-fixed text-2xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
+      </div>
+      <h3 class="font-manrope text-xl font-extrabold text-primary mb-2">Request Sent!</h3>
+      <p class="font-vietnam text-sm text-on-surface-variant mb-6">We'll be in touch within 24 hours with your estimate.</p>
+      <button onclick="closeModal('quote-modal')" class="font-manrope text-xs font-bold uppercase tracking-wider text-primary hover:underline">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════ -->
+<script>
+// ─── Instant-jump nav (skip smooth — would fight the scroll animation) ──
+function navTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'instant' });
+}
+
+// ─── Scroll progress bar ────────────────────────────────────────
+const progressBar = document.getElementById('scroll-progress');
+window.addEventListener('scroll', () => {
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = (window.scrollY / total * 100) + '%';
+}, { passive: true });
+
+// ─── Nav shadow + scroll spy ────────────────────────────────────
+const navbar   = document.getElementById('navbar');
+const sections = Array.from(document.querySelectorAll('main section[id]'));
+const navLinks = Array.from(document.querySelectorAll('.nav-link'));
+
+window.addEventListener('scroll', () => {
+  navbar.style.boxShadow = window.scrollY > 12 ? '0 4px 20px rgba(27,48,34,0.1)' : '';
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+  navLinks.forEach(a => {
+    const match = a.getAttribute('href') === `#${current}`;
+    a.classList.toggle('active', match);
+    a.classList.toggle('text-primary', match);
+    a.classList.toggle('text-on-surface-variant', !match);
+    a.setAttribute('aria-current', match ? 'true' : 'false'); // semantic active state
+  });
+}, { passive: true });
+
+// ─── Mobile menu ────────────────────────────────────────────────
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const isOpen = menu.classList.toggle('open');
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+  const [l1, l2, l3] = document.querySelectorAll('.ham-line');
+  if (isOpen) {
+    l1.style.transform = 'rotate(45deg) translate(5px, 5px)';
+    l2.style.opacity = '0';
+    l3.style.transform = 'rotate(-45deg) translate(5px, -5px)';
+  } else {
+    l1.style.transform = l2.style.opacity = l3.style.transform = '';
+    l2.style.opacity = '';
+  }
+}
+
+// ─── Modals ─────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open');    document.body.style.overflow = 'hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+function handleOverlayClick(e, id) { if (e.target === e.currentTarget) closeModal(id); }
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
+  if (document.getElementById('mobile-menu').classList.contains('open')) toggleMobileMenu();
+});
+
+// ─── Scroll-Driven Video Hero ────────────────────────────────────
+(function () {
+  // ★ UPDATE THIS after frame extraction — set to actual frame count
+  const FRAME_COUNT = 120;
+  const FRAMES_DIR  = 'frames/';
+
+  const canvas     = document.getElementById('hero-canvas');
+  const ctx        = canvas.getContext('2d');
+  const hero       = document.getElementById('hero');
+  const overlay    = document.getElementById('hero-overlay');
+  const loader     = document.getElementById('hero-loader');
+  const loadBar    = document.getElementById('load-bar');
+  const loadText   = document.getElementById('load-text');
+  const scrollHint = document.getElementById('scroll-hint');
+
+  let frames      = new Array(FRAME_COUNT).fill(null);
+  let loaded      = 0;
+  let curFrame    = -1;
+  let rafPending  = false;
+  let ready       = false;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = window.innerWidth  * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width  = window.innerWidth  + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    if (ready) draw(Math.max(0, curFrame));
+  }
+
+  function draw(idx) {
+    const img = frames[idx];
+    if (!img || !img.naturalWidth) return;
+    const cw = canvas.width, ch = canvas.height;
+    const iw = img.naturalWidth,  ih = img.naturalHeight;
+    const canvasAR = cw / ch, imgAR = iw / ih;
+    let dw, dh, dx, dy;
+    if (canvasAR > imgAR) { dw = cw; dh = cw / imgAR; dx = 0; dy = (ch - dh) / 2; }
+    else                  { dh = ch; dw = ch * imgAR;  dy = 0; dx = (cw - dw) / 2; }
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(img, dx, dy, dw, dh);
+  }
+
+  function onFrameLoaded(i, img) {
+    frames[i] = img;
+    loaded++;
+    const pct = (loaded / FRAME_COUNT) * 100;
+    loadBar.style.width = pct + '%';
+    loadText.textContent = 'Loading ' + Math.round(pct) + '%';
+    if (loaded === 1 && img) { resize(); draw(0); }
+    if (loaded >= FRAME_COUNT) {
+      ready = true;
+      loader.style.opacity = '0';
+      setTimeout(() => loader.style.display = 'none', 700);
+      update();
+    }
+  }
+
+  function preload() {
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const img = new Image();
+      const idx = i;
+      img.onload  = () => onFrameLoaded(idx, img);
+      img.onerror = () => onFrameLoaded(idx, null);
+      img.src = FRAMES_DIR + 'frame_' + String(i + 1).padStart(4, '0') + '.jpg';
+    }
+  }
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function update() {
+    if (!ready) return;
+
+    // If user prefers reduced motion, show final frame & keep overlay visible
+    if (prefersReducedMotion) {
+      draw(FRAME_COUNT - 1);
+      return;
+    }
+
+    const rect = hero.getBoundingClientRect();
+    const scrollable = hero.offsetHeight - window.innerHeight;
+    const progress   = Math.max(0, Math.min(1, -rect.top / scrollable));
+    const frameIdx   = Math.min(FRAME_COUNT - 1, Math.round(progress * (FRAME_COUNT - 1)));
+
+    // Fade out overlay text & scroll hint as user begins scrolling
+    const op = Math.max(0, 1 - progress * 5);
+    overlay.style.opacity       = op;
+    overlay.style.transform     = `translateY(${-progress * 60}px)`;
+    overlay.style.pointerEvents = op > 0.05 ? '' : 'none';
+    if (scrollHint) scrollHint.style.opacity = op > 0.5 ? '0.65' : '0';
+
+    if (frameIdx !== curFrame) {
+      curFrame = frameIdx;
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(() => { draw(curFrame); rafPending = false; });
+      }
+    }
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', resize);
+  resize();
+  preload();
+})();
+
+// ─── Before/After Slider ─────────────────────────────────────────
+(function () {
+  const wrap   = document.getElementById('ba-slider');
+  const before = document.getElementById('ba-before-layer');
+  const handle = document.getElementById('ba-handle');
+  let drag = false;
+  let pct  = 50;
+
+  function setPos(cx) {
+    const r = wrap.getBoundingClientRect();
+    pct = Math.max(0, Math.min(100, ((cx - r.left) / r.width) * 100));
+    before.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+    handle.style.left = pct + '%';
+  }
+
+  wrap.addEventListener('mousedown',  e => { e.preventDefault(); drag = true; setPos(e.clientX); });
+  wrap.addEventListener('touchstart', e => { drag = true; setPos(e.touches[0].clientX); }, { passive: true });
+  document.addEventListener('mousemove',  e => { if (drag) { e.preventDefault(); setPos(e.clientX); } });
+  document.addEventListener('touchmove',  e => { if (drag) { e.preventDefault(); setPos(e.touches[0].clientX); } }, { passive: false });
+  document.addEventListener('mouseup',  () => drag = false);
+  document.addEventListener('touchend', () => drag = false);
+
+  // Keyboard support — arrow keys move the handle
+  wrap.setAttribute('tabindex', '0');
+  wrap.setAttribute('role', 'slider');
+  wrap.setAttribute('aria-label', 'Before and after comparison slider');
+  wrap.setAttribute('aria-valuemin', '0');
+  wrap.setAttribute('aria-valuemax', '100');
+  wrap.setAttribute('aria-valuenow', '50');
+  wrap.addEventListener('keydown', e => {
+    const step = e.shiftKey ? 10 : 5;
+    if (e.key === 'ArrowLeft')  { pct = Math.max(0,   pct - step); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { pct = Math.min(100, pct + step); e.preventDefault(); }
+    if (e.key === 'Home') { pct = 0;   e.preventDefault(); }
+    if (e.key === 'End')  { pct = 100; e.preventDefault(); }
+    before.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+    handle.style.left = pct + '%';
+    wrap.setAttribute('aria-valuenow', Math.round(pct));
+  });
+})();
+
+// ─── Gallery filter ──────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    document.querySelectorAll('#gallery-grid .project-card').forEach(c => {
+      c.classList.toggle('hidden-card', f !== 'all' && c.dataset.category !== f);
+    });
+  });
+});
+
+// ─── Scroll reveal ───────────────────────────────────────────────
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }});
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ─── Counter animation ───────────────────────────────────────────
+function animateCounter(el) {
+  const target  = parseInt(el.dataset.target, 10);
+  const suffix  = el.dataset.suffix  || '';
+  const display = el.dataset.display || null;
+  const dur = 1800, t0 = performance.now();
+  function tick(now) {
+    const ease = 1 - Math.pow(1 - Math.min((now - t0) / dur, 1), 3);
+    el.textContent = display && ease >= 1 ? display : Math.round(ease * target) + suffix;
+    if (ease < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const ctrObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !e.target.dataset.animated) {
+      e.target.dataset.animated = '1'; animateCounter(e.target); ctrObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.6 });
+document.querySelectorAll('[data-counter]').forEach(el => ctrObs.observe(el));
+
+// ─── FAB hide on scroll down ─────────────────────────────────────
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  document.getElementById('fab').style.transform = (y > lastY && y > 400) ? 'translateY(140%)' : '';
+  lastY = y;
+}, { passive: true });
+
+// ─── Form handling ───────────────────────────────────────────────
+function validateForm(form) {
+  let ok = true;
+  form.querySelectorAll('[required]').forEach(f => {
+    const errEl = f.id ? document.getElementById(f.id + '-error') : null;
+    const invalid = !f.value.trim() || (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value));
+    f.classList.toggle('error', invalid);
+    if (errEl) errEl.classList.toggle('visible', invalid);
+    if (invalid) ok = false;
+  });
+  if (!ok) {
+    const first = form.querySelector('.error');
+    first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    first?.focus();
+  }
+  return ok;
+}
+// Clear errors on input
+document.querySelectorAll('.form-input').forEach(f => {
+  f.addEventListener('input', () => {
+    f.classList.remove('error');
+    const errEl = f.id ? document.getElementById(f.id + '-error') : null;
+    if (errEl) errEl.classList.remove('visible');
+  });
+});
+
+function handleQuoteSubmit(e) {
+  e.preventDefault();
+  if (!validateForm(e.target)) return;
+  const btn = document.getElementById('submit-btn');
+  document.getElementById('submit-text').textContent = 'Sending…';
+  document.getElementById('submit-spinner').classList.remove('hidden');
+  btn.disabled = true;
+  setTimeout(() => {
+    document.getElementById('quote-form').style.display = 'none';
+    document.getElementById('form-success').classList.remove('hidden');
+  }, 1400);
+}
+function handleModalSubmit(e) {
+  e.preventDefault();
+  if (!validateForm(e.target)) return;
+  e.target.style.display = 'none';
+  document.getElementById('modal-success').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
